@@ -1,5 +1,5 @@
 {
-  description = "Flake for building my website";
+  description = "Flake for building my IVC project website";
 
   nixConfig = {
     extra-substituters = ["https://nix-community.cachix.org"];
