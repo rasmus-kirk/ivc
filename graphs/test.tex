@@ -4,39 +4,134 @@
 
 \begin{document}
 
+$$Ax^2+By-C=0$$
+
+Which can be rewritten to:
+
+$$Ax^2+By = C$$
+
+From this, we can construct a circuit:
+
 \begin{tikzpicture}
-    % Nodes
-    \node (input1) at (0, 4) {$x_1$};
-    \node (input2) at (0, 3) {$x_2$};
-    \node (input3) at (0, 2) {$x_3$};
-    \node (input4) at (0, 1) {$x_4$};
-    \node (input5) at (0, 0) {$x_5$};
+    % First Layer
+    \node (input1) at (3, 7) {$x$};
+    \node (input2) at (5, 7) {$y$};
+    \node (A) at (1, 7) {$A$};
+    \node (B) at (7, 7) {$B$};
     
-    % First layer of gates
-    \node[draw, circle] (add1) at (2, 3.5) {$+$};
-    \node[draw, circle] (mul1) at (2, 1.5) {$\times$};
+    % Second Layer
+    \node[draw, rectangle] (mul21) at (3, 5.5) {$\times$};
+    \node[draw, rectangle] (mul22) at (6, 5.5) {$\times$};
+
+    \draw[->] (input1) -- (2, 7) |- (mul21);
+    \draw[->] (input1) -- (4, 7) |- (mul21);
+
+    \draw[->] (input2) -- (5, 6.5) |- (mul22);
+    \draw[->] (B) -- (7, 6.5) |- (mul22);
+
+    % Third Layer
+    \node[draw, rectangle] (mul31) at (2, 4) {$\times$};
+
+    \draw[->] (mul21) -- (3, 4) |- (mul31);
+    \draw[->] (A) -- (1, 4) |- (mul31);
+
+    % Fourth Layer
+    \node[draw, rectangle] (add41) at (4, 2.5) {$+$};
+
+    \draw[->] (mul31) -- (2, 3.5) |- (add41);
+    \draw[->] (mul22) -- (6, 3.5) |- (add41);
+
+    % Fifth Layer
+    \node (output) at (4, 1) {$C$};
+
+    \draw[->] (add41) -- (output);
+\end{tikzpicture}
+
+Choosing concrete values for $A = 3, B = 5, C = 47$:
+
+\begin{tikzpicture}
+    % First Layer
+    \node (input1) at (3, 7) {$x$};
+    \node (input2) at (5, 7) {$y$};
+    \node (A) at (1, 7) {$3$};
+    \node (B) at (7, 7) {$5$};
     
-    % Second layer of gates
-    \node[draw, circle] (add2) at (4, 3) {$+$};
-    \node[draw, circle] (mul2) at (4, 1) {$\times$};
+    % Second Layer
+    \node[draw, rectangle] (mul21) at (3, 5.5) {$\times$};
+    \node[draw, rectangle] (mul22) at (6, 5.5) {$\times$};
+
+    \draw[->] (input1) -- (2, 7) |- (mul21);
+    \draw[->] (input1) -- (4, 7) |- (mul21);
+
+    \draw[->] (input2) -- (5, 6.5) |- (mul22);
+    \draw[->] (B) -- (7, 6.5) |- (mul22);
+
+    % Third Layer
+    \node[draw, rectangle] (mul31) at (2, 4) {$\times$};
+
+    \draw[->] (mul21) -- (3, 4) |- (mul31);
+    \draw[->] (A) -- (1, 4) |- (mul31);
+
+    % Fourth Layer
+    \node[draw, rectangle] (add41) at (4, 2.5) {$+$};
+
+    \draw[->] (mul31) -- (2, 3.5) |- (add41);
+    \draw[->] (mul22) -- (6, 3.5) |- (add41);
+
+    % Fifth Layer
+    \node (output) at (4, 1) {$47$};
+
+    \draw[->] (add41) -- (output);
+\end{tikzpicture}
+
+Now, I want to prove that I know an input to the circuit, $x$, s.t. the circuit is satisfied.
+
+\begin{tikzpicture}
+    % First Layer
+    \node (input1) at (3, 7) {$x$};
+    \node (input2) at (5, 7) {$y$};
+    \node (A) at (1, 7) {$3$};
+    \node (B) at (7, 7) {$5$};
     
-    % Output
-    \node (output) at (6, 2) {$y$};
+    % Second Layer
+    \node[draw, rectangle] (mul21) at (3, 5.5) {$\times$};
+    \node[above left=0.01cm of mul21] {$a_1$};
+    \node[above right=0.01cm of mul21] {$b_1$};
+    \node[below right=0.01cm of mul21] {$c_1$};
     
-    % Connections
-    \draw[->] (input1) -- (add1);
-    \draw[->] (input2) -- (add1);
-    \draw[->] (input3) -- (mul1);
-    
-    \draw[->] (add1) -- (add2);
-    \draw[->] (input4) -- (add2);
-    
-    \draw[->] (mul1) -- (mul2);
-    \draw[->] (input5) -- (mul2);
-    
-    \draw[->] (add2) -- (output);
-    \draw[->] (mul2) -- (output);
-    
+    \node[draw, rectangle] (mul22) at (6, 5.5) {$\times$};
+    \node[above left=0.01cm of mul22] {$a_2$};
+    \node[above right=0.01cm of mul22] {$b_2$};
+    \node[below right=0.01cm of mul22] {$c_2$};
+
+    \draw[->] (input1) -- (2, 7) |- (mul21);
+    \draw[->] (input1) -- (4, 7) |- (mul21);
+
+    \draw[->] (input2) -- (5, 6.5) |- (mul22);
+    \draw[->] (B) -- (7, 6.5) |- (mul22);
+
+    % Third Layer
+    \node[draw, rectangle] (mul31) at (2, 4) {$\times$};
+    \node[above left=0.01cm of mul31] {$a_3$};
+    \node[above right=0.01cm of mul31] {$b_3$};
+    \node[below right=0.01cm of mul31] {$c_3$};
+
+    \draw[->] (mul21) -- (3, 4) |- (mul31);
+    \draw[->] (A) -- (1, 4) |- (mul31);
+
+    % Fourth Layer
+    \node[draw, rectangle] (add41) at (4, 2.5) {$+$};
+    \node[above left=0.01cm of add41] {$a_3$};
+    \node[above right=0.01cm of add41] {$b_3$};
+    \node[below right=0.01cm of add41] {$c_3$};
+
+    \draw[->] (mul31) -- (2, 3.5) |- (add41);
+    \draw[->] (mul22) -- (6, 3.5) |- (add41);
+
+    % Fifth Layer
+    \node (output) at (4, 1) {$47$};
+
+    \draw[->] (add41) -- (output);
 \end{tikzpicture}
 
 \end{document}

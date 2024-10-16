@@ -15,10 +15,9 @@
     };
     flake-root.url = "github:srid/flake-root";
 
-    devshell = {
-      url = "github:numtide/devshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    devshell.url = "github:numtide/devshell";
+    devshell.inputs.nixpkgs.follows = "nixpkgs";
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,7 +41,10 @@
         config,
         pkgs,
         ...
-      }: {
+      }: let
+        mkPandoc = import ./mkPandoc.nix { pkgs = pkgs; };
+        mkPandocDebug = import ./mkPandoc.nix { pkgs = pkgs; debug = true; };
+      in {
         treefmt.config = {
           inherit (config.flake-root) projectRootFile;
           package = pkgs.treefmt;
@@ -54,21 +56,17 @@
         };
 
         packages = rec {
-          pandoc = pkgs.callPackage ./mkPandoc.nix { debug = false; };
-          debug = pkgs.callPackage ./mkPandoc.nix { debug = true; };
+          pandoc = mkPandoc.package;
+          debug = mkPandocDebug.package;
           default = pandoc;
         };
 
         devshells.default = {
-          name = "Rasmus Kirk";
-
-          commands = [
-            {
-              category = "Tools";
-              name = "fmt";
-              help = "Format the source tree";
-              command = "nix fmt";
-            }
+          packages = [ 
+            pkgs.hello
+            mkPandocDebug.script
+            mkPandocDebug.loop
+            mkPandocDebug.server
           ];
         };
       };
